@@ -1,4 +1,5 @@
-# Namespacedict.py
+# namespacedict.py
+
 Namespace / dictionary crossover
 
 Aims to mix python dictionaries and dot-separated namespaces.
