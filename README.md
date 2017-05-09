@@ -24,7 +24,7 @@ Create an empty NameSpaceDict:
 >>> from namespacedict import NameSpaceDict
 >>> a = NameSpaceDict()
 >>> print(a)
->>> <NSDict {}>
+<<< <NSDict {}>
 ```
 
 Or, build one from dict (or any object supported by `dict()`):
@@ -75,6 +75,6 @@ automatically converted to NameSpaceDicts:
 ```
 >> a = NameSpaceDict()
 >> a['b'] = {'c': {'d': 5}}
-<< a.b.c.d
+>> a.b.c.d
 << 5
 ```
