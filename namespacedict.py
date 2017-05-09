@@ -17,6 +17,12 @@ def _parse_namespaced_dict(to_parse, top=None):
     return top
 
 
+def _nsd_or_value(val):
+    if not isinstance(val, (dict, NameSpaceDict)):
+        return val
+    return NameSpaceDict(val)
+
+
 class NameSpaceDict(object):
     """ Dict with namespaces
 
@@ -61,10 +67,7 @@ class NameSpaceDict(object):
             except KeyError:
                 raise AttributeError
 
-        if isinstance(cur_v, dict):
-            return NameSpaceDict(cur_v)
-        else:
-            return cur_v
+        return _nsd_or_value(cur_v)
 
     def __setattr__(self, name, value):
         if name != '_dict':
@@ -101,5 +104,17 @@ class NameSpaceDict(object):
             return (self._dict == other._dict)
         return self._dict == other
 
+    def __iter__(self):
+        return (key for key in self._dict.keys())
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def values(self):
+        return (_nsd_or_value(val) for val in self._dict.values())
+
+    def keys(self):
+        return (key for key in self._dict.keys())
+
+    def items(self):
+        return ((key, val) for key, val in zip(self.keys(), self.values()))
