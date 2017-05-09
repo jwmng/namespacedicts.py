@@ -1,4 +1,10 @@
-import random
+# -*- coding: utf-8 -*-
+""" NameSpacedDicts: Name-spaced hierarchical dictionaries.
+
+See the accompanying README or class documentation of `NameSpaceDict` for more
+info.
+
+"""
 
 
 def _parse_namespaced_dict(to_parse, top=None):
@@ -18,9 +24,13 @@ def _parse_namespaced_dict(to_parse, top=None):
 
 
 def _nsd_or_value(val):
-    if not isinstance(val, (dict, NameSpaceDict)):
+    if isinstance(val, NameSpaceDict):
         return val
-    return NameSpaceDict(val)
+
+    if isinstance(val, dict):
+        return NameSpaceDict(val)
+
+    return val
 
 
 class NameSpaceDict(object):
@@ -52,16 +62,25 @@ class NameSpaceDict(object):
 
         """
     def __init__(self, init=None):
+        """ Create a new NameSpaceDict
+
+        Args:
+            init (iterable/dict): Initial dictionary to convert. Any type that
+            supports `dict(x)` is allowed.
+        """
         super(NameSpaceDict, self).__init__()
 
         init = {} if init is None else init
         self._dict = _parse_namespaced_dict(dict(init))
 
     def __getattr__(self, name):
+        if not isinstance(name, str):
+            return self._dict[name]
+
         spaces = name.split('.')
 
-        cur_v = self._dict[spaces[0]]
-        for space in spaces[1:]:
+        cur_v = self._dict
+        for space in spaces:
             try:
                 cur_v = cur_v[space]
             except KeyError:
@@ -76,6 +95,10 @@ class NameSpaceDict(object):
             super(NameSpaceDict, self).__setattr__(name, value)
 
     def __setitem__(self, name, value):
+        if not isinstance(name, str):
+            self._dict[name] = value
+            return
+
         # Parse the name recursively
         spaces = name.split('.')
 
@@ -111,10 +134,13 @@ class NameSpaceDict(object):
         return not self.__eq__(other)
 
     def values(self):
+        """ Like `dict.values`, but a generator with NameSpaceDicts"""
         return (_nsd_or_value(val) for val in self._dict.values())
 
     def keys(self):
+        """ Like `dict.keys`, but a generator """
         return (key for key in self._dict.keys())
 
     def items(self):
+        """ Like `dict.items` but returns NameSpaceDicts where possible """
         return ((key, val) for key, val in zip(self.keys(), self.values()))

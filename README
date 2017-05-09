@@ -2,7 +2,7 @@
 Namespace / dictionary crossover
 
 Aims to mix python dictionaries and dot-separated namespaces.
-Indexes/keys have 'levels' divided by dots:
+Any key containing a dot (`.`) will be interpreted as a multi-level key:
 
 ```
 a.b.c = 5
@@ -48,8 +48,11 @@ Or, as an object:
 <<< <NSDict {'b': {'c': 5}, 'd': 5}>
 ```
 
-_Note_: The parent `NSDict` must be initialised: setting `a[b.e.d] = 3` would 
+_Note_: The parent `NSDict` must be initialised: setting `a['b.e.d'] = 3` would 
 first require setting `a[b.e] = {}`.
+
+_Note_: Other hashable key types are allowed, but of access like `a.3.b` does
+not make sense and is thus not allowed (`a[3].b` would be valid).
 
 ### Access
 Access it as a dict:
